@@ -11,60 +11,92 @@
   </head>
 
   <body>
+    <form id="idForm" action="" method="get" class="form-example">
+      <div class="form-example">
+        <label for="name">Enter your Rookie ID: </label>
+        <input type="text" name="rookie_id" id="rookieId" required>
+      </div>
+      <div class="form-example">
+        <input type="submit" value="Generate chart">
+      </div>
+    </form>
     <div class="chart-container" style="position: relative; height:95vh; width:100vw">
       <canvas id="myChart"></canvas>
     </div>
   </body>
 
   <script>
-        let height, width, stamina, speed, strength, agility, creativity, influence, aggression, focus;
-        let attributes = [
-          "Stamina", 
-          "Speed", 
-          "Strength", 
-          "Agility", 
-          "Creativity", 
-          "Influence", 
-          "Aggression", 
-          "Focus",
-        ];
-        let values = [];
-        $.get( "https://ipfs.io/ipfs/QmNhLwJjiA4M1sJ71oLwpFhYf8gJTU7aLRCaQYQ9Ezj2ZN/9122", function( data ) {
-          data.attributes.slice(2,10).map((attr, index) => {
-            const value = attr["value"];
-            values.push(value);
-          }) 
-          const options = {
-              scale: {
-                  min: 0,
-                  max: 10,
-              },
-              responsive: true,
-              maintainAspectRatio: false
-          };
-          console.log(options);
-          const ctx = document.getElementById('myChart').getContext('2d');
-          const rookieData = {
-            labels: attributes,
-            datasets: [{
-              label: 'Rookie #9122',
-              data: values,
-              fill: true,
-              backgroundColor: 'rgba(255, 99, 132, 0.2)',
-              borderColor: 'rgb(255, 99, 132)',
-              pointBackgroundColor: 'rgb(255, 99, 132)',
-              pointBorderColor: '#fff',
-              pointHoverBackgroundColor: '#fff',
-              pointHoverBorderColor: 'rgb(255, 99, 132)'
-            }],
-            options: options
-          };
-          const config = {
-            type: 'radar',
-            data: rookieData,
-            options: options
-          };
-          let myChart = new Chart(ctx, config)
-          });
-      </script>
+    let height, width, stamina, speed, strength, agility, creativity, influence, aggression, focus;
+    let attributes = [
+      "Stamina", 
+      "Speed", 
+      "Strength", 
+      "Agility", 
+      "Creativity", 
+      "Influence", 
+      "Aggression", 
+      "Focus",
+    ];
+    let rookieStatChart;
+
+    $( "#idForm" ).submit(event => {
+		  event.preventDefault();
+		  let values = [];
+
+		  const rookieId = $("input[name=rookie_id]").val();
+		  console.log(rookieId)
+
+		  $.get( "https://ipfs.io/ipfs/QmNhLwJjiA4M1sJ71oLwpFhYf8gJTU7aLRCaQYQ9Ezj2ZN/" + rookieId, data => {
+      	data.attributes.slice(2,10).map((attr, index) => {
+        	const value = attr["value"];
+        	values.push(value);
+      	}) 
+
+      	console.log(values);
+
+	      const options = {
+	          scale: {
+	              min: 0,
+	              max: 10,
+	          },
+	          responsive: true,
+	          maintainAspectRatio: false
+	      };
+
+	      const ctx = document.getElementById('myChart').getContext('2d');
+
+	      const rookieData = {
+	        labels: attributes,
+	        datasets: [{
+	          label: 'Rookie #' + rookieId,
+	          data: values,
+	          fill: true,
+	          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+	          borderColor: 'rgb(255, 99, 132)',
+	          pointBackgroundColor: 'rgb(255, 99, 132)',
+	          pointBorderColor: '#fff',
+	          pointHoverBackgroundColor: '#fff',
+	          pointHoverBorderColor: 'rgb(255, 99, 132)'
+	        }],
+	        options: options
+	      };
+
+	      const config = {
+	        type: 'radar',
+	        data: rookieData,
+	        options: options
+	      };
+
+	      if (rookieStatChart === undefined) {
+	      	console.log("here")
+	      	rookieStatChart = new Chart(ctx, config);
+	      } else {
+	      	console.log("here destroy");
+	      	rookieStatChart.destroy();
+	      	rookieStatChart = new Chart(ctx, config);
+	      }
+	   
+	    });
+		});
+  </script>
 </html>
