@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Your first HTML form</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js" type="text/javascript"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"></script>  
+  </head>
+
+  <body>
+    <div class="chart-container" style="position: relative; height:95vh; width:100vw">
+      <canvas id="myChart"></canvas>
+    </div>
+  </body>
+
+  <script>
+        let height, width, stamina, speed, strength, agility, creativity, influence, aggression, focus;
+        let attributes = [
+          "Stamina", 
+          "Speed", 
+          "Strength", 
+          "Agility", 
+          "Creativity", 
+          "Influence", 
+          "Aggression", 
+          "Focus",
+        ];
+        let values = [];
+        $.get( "https://ipfs.io/ipfs/QmNhLwJjiA4M1sJ71oLwpFhYf8gJTU7aLRCaQYQ9Ezj2ZN/9122", function( data ) {
+          data.attributes.slice(2,10).map((attr, index) => {
+            const value = attr["value"];
+            values.push(value);
+          }) 
+          const options = {
+              scale: {
+                  min: 0,
+                  max: 10,
+              },
+              responsive: true,
+              maintainAspectRatio: false
+          };
+          console.log(options);
+          const ctx = document.getElementById('myChart').getContext('2d');
+          const rookieData = {
+            labels: attributes,
+            datasets: [{
+              label: 'Rookie #9122',
+              data: values,
+              fill: true,
+              backgroundColor: 'rgba(255, 99, 132, 0.2)',
+              borderColor: 'rgb(255, 99, 132)',
+              pointBackgroundColor: 'rgb(255, 99, 132)',
+              pointBorderColor: '#fff',
+              pointHoverBackgroundColor: '#fff',
+              pointHoverBorderColor: 'rgb(255, 99, 132)'
+            }],
+            options: options
+          };
+          const config = {
+            type: 'radar',
+            data: rookieData,
+            options: options
+          };
+          let myChart = new Chart(ctx, config)
+          });
+      </script>
+</html>
